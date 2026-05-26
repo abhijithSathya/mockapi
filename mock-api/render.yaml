@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: forecasting-workforce-mock-api
+    runtime: node
+    plan: free
+    rootDir: mock-api
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production

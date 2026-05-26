@@ -1,0 +1,12 @@
+{
+  "name": "forecasting-workforce-mock-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Mock REST API server for the Forecasting workforce backend API v4 contracts.",
+  "scripts": {
+    "dev": "node src/render-server.mjs",
+    "start": "node src/render-server.mjs",
+    "test": "node --test"
+  }
+}
