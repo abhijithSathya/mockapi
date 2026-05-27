@@ -417,7 +417,7 @@ function getHireOptions(args = {}) {
 
 function simulateHireImpact(args = {}) {
   requireHire(args);
-  const selectedOptionIds = normalizeList(args.selectedOptionIds || args.optionIds).filter((id) => HIRE_OPTIONS.some((option) => option.optionId === id));
+  const selectedOptionIds = normalizeOptionIds(args.selectedOptionIds || args.optionIds || args.selectedResourceIds, "FL-HIRE").filter((id) => HIRE_OPTIONS.some((option) => option.optionId === id));
   const selectedOptions = selectedOptionIds.map((id) => HIRE_OPTIONS.find((option) => option.optionId === id));
   const selectedResourceCount = selectedResourceCountFor(args, selectedOptions);
   const addedWeeklyCapacityHours = selectedOptions.reduce((sum, option) => sum + option.weeklyCapacityHoursPerResource * resourceCountForOption(args, option), 0);
@@ -554,7 +554,7 @@ function getMoveOptions(args = {}) {
 
 function simulateMoveImpact(args = {}) {
   requireMove(args);
-  const selectedOptionIds = normalizeList(args.selectedOptionIds || args.optionIds).filter((id) => MOVE_OPTIONS.some((option) => option.optionId === id));
+  const selectedOptionIds = normalizeOptionIds(args.selectedOptionIds || args.optionIds || args.selectedMoveOptionIds || args.selectedResourceIds, "CA-MOVE").filter((id) => MOVE_OPTIONS.some((option) => option.optionId === id));
   const selectedOptions = selectedOptionIds.map((id) => MOVE_OPTIONS.find((option) => option.optionId === id));
   const selectedResourceIds = selectedOptions.map((option) => option.resourceId);
   const idleDelta = selectedOptions.reduce((sum, option) => sum + option.projectedSourceIdleMinutesReduction, 0);
@@ -939,6 +939,14 @@ function normalizeList(value) {
   if (value === undefined || value === null || value === "") return [];
   const list = Array.isArray(value) ? value : [value];
   return list.flatMap((item) => String(item).split(",")).map((item) => item.trim().toUpperCase()).filter(Boolean);
+}
+
+function normalizeOptionIds(value, prefix) {
+  const direct = normalizeList(value);
+  const text = direct.join(",");
+  const regex = new RegExp(`${prefix}\\s*-\\s*\\d{3}`, "gi");
+  const extracted = text.match(regex)?.map((item) => item.replace(/\s+/g, "").toUpperCase()) || [];
+  return [...new Set([...direct, ...extracted])];
 }
 
 function first(value) {

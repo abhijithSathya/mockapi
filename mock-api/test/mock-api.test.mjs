@@ -54,6 +54,24 @@ test("move simulation returns numeric source and target impact", async () => {
   assert.ok(body.targetAreaImpacts.length > 0);
 });
 
+test("simulations can extract option IDs from submitted app payload text", async () => {
+  const hire = await post("/forecasting/workforce/hire-simulations", {
+    capacityArea: "FL",
+    issueType: "TIME_TO_START",
+    selectedResourceIds: "{\"selectedResourceIds\":[\"FL-HIRE-001\",\"FL-HIRE-002\"]}"
+  });
+  assert.deepEqual(hire.selectedOptionIds, ["FL-HIRE-001", "FL-HIRE-002"]);
+  assert.equal(hire.selectedResourceCount, 2);
+
+  const move = await post("/forecasting/workforce/resource-move-simulations", {
+    capacityArea: "CA",
+    issueType: "IDLE_TIME",
+    selectedMoveOptionIds: "{\"selectedMoveOptionIds\":[\"CA-MOVE-001\"]}"
+  });
+  assert.deepEqual(move.selectedOptionIds, ["CA-MOVE-001"]);
+  assert.equal(move.selectedResourceIds[0], "RES-CA-014");
+});
+
 async function post(path, payload) {
   const response = await request(path, payload);
   assert.equal(response.status, 200);
