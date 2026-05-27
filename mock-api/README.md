@@ -17,6 +17,8 @@ Default local URL: `http://localhost:8788`
 ## Endpoints
 
 - `GET /health`
+- `GET /openapi.json`
+- `GET /swagger.json`
 - `GET /mock/state`
 - `POST /mock/reset`
 - `POST /forecasting/workforce/recommendation-candidates`

@@ -1,3 +1,5 @@
+import { getOpenApiSpec } from "./openapi-spec.mjs";
+
 const SERVICE_NAME = "forecasting-workforce-mock-api";
 const SERVICE_VERSION = "0.1.0";
 const BASE_NOW = "2026-05-26T10:30:00Z";
@@ -283,12 +285,17 @@ export async function handleHttpRequest(request, env = {}) {
     if (request.method === "GET" && url.pathname === "/health") {
       return responseJson({ ok: true, service: SERVICE_NAME, version: SERVICE_VERSION, generatedAt: BASE_NOW });
     }
+    if (request.method === "GET" && (url.pathname === "/openapi.json" || url.pathname === "/swagger.json")) {
+      return responseJson(getOpenApiSpec());
+    }
     if (request.method === "GET" && url.pathname === "/") {
       return responseJson({
         service: SERVICE_NAME,
         version: SERVICE_VERSION,
         endpoints: [
           "GET /health",
+          "GET /openapi.json",
+          "GET /swagger.json",
           "GET /mock/state",
           "POST /mock/reset",
           "POST /forecasting/workforce/recommendation-candidates",

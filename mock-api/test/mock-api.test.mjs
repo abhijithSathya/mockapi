@@ -2,6 +2,15 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { handleHttpRequest, resetState } from "../src/mock-api-core.mjs";
 
+test("OpenAPI spec exposes forecasting workforce operations", async () => {
+  const response = await handleHttpRequest(new Request("http://localhost/openapi.json", { method: "GET" }));
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(body.swagger, "2.0");
+  assert.equal(body.paths["/forecasting/workforce/recommendation-candidates"].post.operationId, "get_workforce_recommendation_candidates");
+  assert.equal(body.paths["/forecasting/workforce/resource-move-batches"].post.operationId, "create_idle_time_resource_move_batch");
+});
+
 test("landing recommendation candidates do not require capacity areas", async () => {
   resetState();
   const body = await post("/forecasting/workforce/recommendation-candidates", { limit: 3 });
